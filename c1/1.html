@@ -24,7 +24,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding-bottom: 80px; /* 底部预留更多空间给背景 */
+            padding-bottom: 40px; /* 底部预留空间 */
         }
 
         /* 2. 主容器 */
@@ -36,11 +36,11 @@
             padding-top: 20px;
         }
 
-        /* 3. 图片通用设置：大小自适应，不拉伸 */
+        /* 3. 图片通用设置 */
         img {
             width: auto;          /* 宽度由原图决定 */
             height: auto;         /* 高度由原图决定 */
-            max-width: 100%;      /* 限制最大宽度不超过容器 */
+            max-width: 100%;      /* 限制最大宽度不超过格子 */
             display: block;
             margin: 0 auto;
             object-fit: contain;
@@ -51,7 +51,7 @@
             margin-bottom: 5px;
         }
 
-        /* 5. 下半部分网格布局 (用于5, 6, 7系列) */
+        /* 5. 网格布局 (用于 5, 6, 7系列) */
         .grid-box {
             display: grid;
             width: 100%;
@@ -59,24 +59,20 @@
             
             /* 分两列，列间距50px */
             grid-template-columns: 1fr 1fr; 
-            gap: 10px 30px; 
+            gap: 10px 50px; 
             
             justify-items: center;
             align-items: start;
         }
 
-        /* 图片6：跨列居中 */
-        .img-full-row {
-            grid-column: 1 / -1;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            margin: 10px 0; /* 图片6本身的上下间距 */
-        }
+        /* 
+           因为 6.png 变成了 6-1 和 6-2，且布局与 5、7 一样，
+           所以不需要特殊的 .img-full-row 样式了，直接放入 grid 即可
+        */
 
-        /* 关键修改：专门控制 7-1 和 7-2 往下移的距离 */
+        /* 6. 专门控制 7-1 和 7-2 往下移的距离 */
         .spacer-top {
-            margin-top: 80px; /* 这里控制下移距离，数值越大越靠下 */
+            margin-top: 40px; /* 保持之前的下移设置 */
         }
 
         /* 交互样式 */
@@ -103,47 +99,54 @@
         <!-- 网格布局区域 -->
         <div class="grid-box">
             
-            <!-- 5-1 (左) -->
-            <div>
-                <img src="5-1.png" alt="图片5-1">
-            </div>
+            <!-- 第5行: 5-1 (左), 5-2 (右) -->
+            <div><img src="5-1.png" alt="图片5-1"></div>
+            <div><img src="5-2.png" alt="图片5-2"></div>
 
-            <!-- 5-2 (右) -->
-            <div>
-                <img src="5-2.png" alt="图片5-2">
-            </div>
+            <!-- 第6行 (新修改): 6-1 (左), 6-2 (右) -->
+            <!-- 布局与上一行一致，自然排列在网格中 -->
+            <div><img src="6-1.png" alt="图片6-1" id="target-img-1"></div>
+            <div><img src="6-2.png" alt="图片6-2" id="target-img-2"></div>
 
-            <!-- 6 (居中，跨两列) -->
-            <div class="img-full-row">
-                <img src="6.png" alt="图片6" id="img-to-save">
-            </div>
-
-            <!-- 7-1 (左侧，增加 spacer-top 往下移) -->
-            <div>
+            <!-- 第7行: 7-1 (左), 7-2 (右) -->
+            <!-- 带有 spacer-top，保持下移效果 -->
+            <div class="spacer-top">
                 <a href="https://qm.qq.com/q/h7ulsrPBHG" target="_blank">
                     <img src="7-1.png" alt="图片7-1" class="clickable">
                 </a>
             </div>
 
-            <!-- 7-2 (右侧，增加 spacer-top 往下移) -->
-            <div>
-                <img src="7-2.png" alt="图片7-2" class="clickable" id="btn-save">
+            <div class="spacer-top">
+                <img src="7-2.png" alt="点击保存" class="clickable" id="btn-save">
             </div>
 
         </div>
     </div>
 
     <script>
-        // 点击保存功能
         document.getElementById('btn-save').addEventListener('click', function() {
-            const imgUrl = '6.png';
-            const imgName = '6.png';
+            // 设置你想保存的图片，这里假设保存 6-1.png
+            const imgUrl = '6-1.png'; 
+            const imgName = '6-1.png';
+
+            // 检测是否是移动端（简单判断）
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+            // 尝试下载
             const link = document.createElement('a');
             link.href = imgUrl;
             link.download = imgName;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+
+            // 给移动端用户的提示
+            // 因为手机浏览器不支持脚本直接写入相册，只能下载到文件
+            if (isMobile) {
+                setTimeout(function(){
+                    alert('已触发下载。\n\n温馨提示：\n由于手机系统限制，网页无法直接写入相册。\n\n1. 请检查“文件”或“下载”文件夹。\n2. 或者请【长按图片】选择“保存到相册”即可。');
+                }, 500);
+            }
         });
     </script>
 </body>
