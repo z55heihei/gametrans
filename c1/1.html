@@ -59,7 +59,7 @@
             
             /* 分两列，列间距50px */
             grid-template-columns: 1fr 1fr; 
-            gap: 10px 50px; 
+            gap: 10px 30px; 
             
             justify-items: center;
             align-items: start;
@@ -76,7 +76,7 @@
 
         /* 关键修改：专门控制 7-1 和 7-2 往下移的距离 */
         .spacer-top {
-            margin-top: 40px; /* 这里控制下移距离，数值越大越靠下 */
+            margin-top: 80px; /* 这里控制下移距离，数值越大越靠下 */
         }
 
         /* 交互样式 */
@@ -119,14 +119,14 @@
             </div>
 
             <!-- 7-1 (左侧，增加 spacer-top 往下移) -->
-            <div class="spacer-top">
+            <div>
                 <a href="https://qm.qq.com/q/h7ulsrPBHG" target="_blank">
                     <img src="7-1.png" alt="图片7-1" class="clickable">
                 </a>
             </div>
 
             <!-- 7-2 (右侧，增加 spacer-top 往下移) -->
-            <div class="spacer-top">
+            <div>
                 <img src="7-2.png" alt="图片7-2" class="clickable" id="btn-save">
             </div>
 
@@ -148,3 +148,5 @@
     </script>
 </body>
 </html>
+
+
