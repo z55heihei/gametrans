@@ -5,118 +5,109 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>自适应网页</title>
     <style>
-        /* 1. 全局样式 */
+        /* 1. 全局重置 */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent; /* 去除点击高亮 */
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            /* 背景图设置：底部居中 */
+            /* 底部背景 bg.png */
             background: url('bg.png') no-repeat center bottom;
-            background-size: 100% auto; /* 背景宽度撑满，高度自适应 */
-            /* 如果背景图较短，想铺满整个屏幕，可以用 cover，但 usually 'contain' or '100% auto' fits bottom designs better */
-            background-color: #f5f5f5; /* 备用背景色 */
+            background-size: 100% auto; /* 宽度100%，高度自适应 */
+            background-color: #f5f5f5;
             min-height: 100vh;
-            font-size: 0;
             
-            /* 使用 Flex 让内容居中 */
+            /* 布局方式：Flex 居中 */
             display: flex;
             flex-direction: column;
-            align-items: center; 
-            padding-bottom: 50px; /* 底部留白，防止内容贴底 */
+            align-items: center;
+            padding-bottom: 60px; /* 底部留出空间给背景图显示 */
         }
 
-        /* 2. 核心容器：控制所有图片的大小范围 */
+        /* 2. 核心容器 */
         .container {
-            width: 90%;          /* 关键：只占据屏幕宽度的90%，让两边留出空隙，体现“在背景内” */
-            max-width: 650px;    /* 限制最大宽度，防止在电脑上变得巨大 */
-            margin: 0 auto;      /* 容器居中 */
-            padding-top: 20px;   /* 顶部留白 */
-            
-            /* 
-               如果你需要更严格的“框”的效果，可以在这里加 padding
-               例如：padding: 0 20px; 
-            */
-        }
-
-        /* 3. 图片通用样式 */
-        img {
-            display: block;
-            width: 100%;         /* 图片宽度自动撑满容器（container）的宽度 */
-            height: auto;
-            object-fit: contain;
+            width: 90%;           /* 限制总宽度为屏幕的 90%，确保在 bg.png 范围内 */
+            max-width: 650px;     /* PC端最大宽度 */
             margin: 0 auto;
+            text-align: center;   /* 让内部 inline-block 或 auto margin 的图片居中 */
+            padding-top: 20px;
         }
 
-        /* 4. 单列图片间距微调 (图片1,2,3,4) */
+        /* 3. 图片通用样式 - 核心修改点 */
+        img {
+            /* 重点：图片由自身高度/宽度决定，不强制撑满 */
+            width: auto;          
+            height: auto;
+            
+            /* 限制最大宽度不超过容器，防止撑爆屏幕 */
+            max-width: 100%;      
+            
+            /* 保持显示块级，方便居中 */
+            display: block;       
+            margin: 0 auto;       /* 水平居中 */
+            
+            /* 消除图片模糊 */
+            object-fit: contain;  
+        }
+
+        /* 4. 顶部图片堆叠间距 */
         .stack-item {
-            margin-bottom: 0px; /* 图片之间的上下间距，如需要缝隙可改为 10px */
+            margin-bottom: 5px; /* 图片之间的自然间距，可自行调整 */
         }
 
-        /* 5. 复杂网格布局 (用于 5-x, 6, 7-x) */
+        /* 5. 复杂网格布局 (用于 5, 6, 7) */
         .grid-box {
             display: grid;
             width: 100%;
-            margin-top: 0px; /* 与上方图片4的间距 */
+            margin-top: 5px;
             
-            /* 两列布局 */
+            /* 两列布局：两边各占一半空间 */
             grid-template-columns: 1fr 1fr; 
             
-            /* 间距控制：
-               行间距 10px 
-               列间距 50px (您要求的 5-1 和 5-2 间隔) 
-            */
+            /* 间距控制：行间距 10px，列间距 50px */
             gap: 10px 50px; 
             
-            align-items: start; /* 顶部对齐 */
+            /* 让格子内的图片居中对齐 */
+            justify-items: center;
+            align-items: start;
         }
 
-        /* 图片6 跨越两列并居中 */
-        .img-center-full {
-            grid-column: 1 / -1; /* 占满整行 */
-            width: 100%;        /* 控制图片6的大小 */
-            max-width: 100%;    /* 可选：如果想让6号图比上面的小一点，可以改成 80% */
-            margin: 10px auto;  /* 上下间距 */
+        /* 图片6 跨越两列 (占满整行) */
+        .img-full-row {
+            grid-column: 1 / -1; 
+            width: 100%;
+            display: flex;       /* 使用 Flex 保证内部图片居中 */
+            justify-content: center;
+            margin: 10px 0;
         }
 
-        /* 交互类 */
+        /* 交互效果 */
         .clickable {
             cursor: pointer;
-            transition: transform 0.1s;
         }
-        .clickable:active {
-            transform: scale(0.95); /* 点击时的按压效果 */
-        }
-
-        /* 链接去除默认样式 */
+        
+        /* 链接样式重置 */
         a {
-            display: block; 
-            width: 100%;
+            display: inline-block; /* 适应图片大小 */
+            text-decoration: none;
         }
 
     </style>
 </head>
 <body>
 
-    <!-- 限制所有内容宽度的总容器 -->
     <div class="container">
-        
-        <!-- 2. 图片1 -->
+        <!-- 2-5. 顶部单列图片 -->
+        <!-- 图片大小完全由原图决定，若原图宽于屏幕则自动缩小，若小于屏幕则保持原大小居中 -->
         <img src="1.png" alt="图片1" class="stack-item">
-
-        <!-- 3. 图片2 -->
         <img src="2.png" alt="图片2" class="stack-item">
-
-        <!-- 4. 图片3 -->
         <img src="3.png" alt="图片3" class="stack-item">
-
-        <!-- 5. 图片4 -->
         <img src="4.png" alt="图片4" class="stack-item">
 
-        <!-- 下半部分网格布局 -->
+        <!-- 网格布局区域 -->
         <div class="grid-box">
             
             <!-- 6. 图片5-1 (左) -->
@@ -130,7 +121,7 @@
             </div>
 
             <!-- 7. 图片6 (位于 5-1/5-2 下，居中) -->
-            <div class="img-center-full">
+            <div class="img-full-row">
                 <img src="6.png" alt="图片6" id="img-to-save">
             </div>
 
@@ -150,10 +141,12 @@
     </div>
 
     <script>
-        // 逻辑保持不变：点击 7-2 保存 6.png
+        // 9. 逻辑功能：点击 7-2 保存 6.png
         document.getElementById('btn-save').addEventListener('click', function() {
             const imgUrl = '6.png';
-            const imgName = '6.png';
+            // 为了兼容性，下载文件名最好不要包含中文，这里设为 saved-image.png 或 6.png
+            const imgName = '6.png'; 
+
             const link = document.createElement('a');
             link.href = imgUrl;
             link.download = imgName;
